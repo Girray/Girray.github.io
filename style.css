@@ -1,0 +1,119 @@
+/* ========== 全局 ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, sans-serif;
+  background: #03040f; color: #e6e8f2;
+  overflow-x: clip;
+}
+
+/* ========== 星空背景 ========== */
+#stars {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 120%, #1b2150 0%, #0a0e27 50%, #03040f 100%);
+}
+
+/* ========== 开头 ========== */
+.intro { height: 100vh; display: grid; place-content: center; text-align: center; }
+
+/* ========== 时间轴 ========== */
+.timeline { position: relative; max-width: 900px; margin: 0 auto; padding: 40px 0; }
+.timeline::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%;
+  width: 2px; background: rgba(255,255,255,.2); transform: translateX(-50%);
+}
+
+/* ========== 节点（位置 + 入场动画） ========== */
+.node {
+  position: relative; width: 50%; padding: 20px 40px;
+  opacity: 0;
+  transition: opacity .6s ease, transform .6s ease;
+}
+.node:nth-child(odd)  { left: 0;   text-align: right; transform: translateX(-40px); }
+.node:nth-child(even) { left: 50%;                    transform: translateX(40px); }
+.node.visible { opacity: 1; transform: none; }
+
+/* 圆点 */
+.node::after {
+  content: ""; position: absolute; top: 28px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #0a0e27; border: 3px solid #8fa8ff;
+}
+.node:nth-child(odd)::after  { right: -7px; }
+.node:nth-child(even)::after { left:  -7px; }
+
+/* ========== 卡片 ========== */
+.card {
+  padding: 16px 20px;
+  border-radius: 10px;
+  background: rgba(20,24,55,.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.08);
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(150,170,255,.25);
+}
+.summary { font-size: 14px; color: #9aa3c7; margin-top: 4px; }
+
+/* ========== 弹窗 ========== */
+.modal {
+  position: fixed; inset: 0;
+  background: rgba(3,4,15,.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s ease;
+  z-index: 100;
+}
+.modal.open { opacity: 1; pointer-events: auto; }
+
+.modal-content {
+  position: relative;
+  width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+  padding: 24px; border-radius: 12px;
+  background: rgba(16,20,44,.92);
+  border: 1px solid rgba(143,168,255,.25);
+  box-shadow: 0 0 40px rgba(120,140,255,.2);
+  color: #e6e8f2;
+  transform: scale(.9);
+  transition: transform .3s ease;
+}
+.modal.open .modal-content { transform: scale(1); }
+
+.modal-content img {
+  width: 100%; max-height: 50vh; object-fit: cover;
+  border-radius: 8px; margin-bottom: 16px;
+}
+.modal-content p { line-height: 1.7; white-space: pre-line; margin-top: 8px; }
+
+#modal-year   { color: #8fa8ff; font-size: 14px; letter-spacing: .1em; }
+#modal-title  { margin-top: 4px; }
+#modal-detail { color: #b4bad6; }
+
+.modal-close {
+  position: absolute; top: 8px; right: 12px;
+  border: none; background: none;
+  font-size: 28px; color: #8a90b0; cursor: pointer;
+}
+.modal-close:hover { color: #fff; }
+/* ========== 窄屏（手机） ========== */
+@media (max-width: 700px) {
+  .timeline::before { left: 20px; }          /* 竖线移到左边 */
+
+  .node,
+  .node:nth-child(odd),
+  .node:nth-child(even) {
+    width: 100%; left: 0; text-align: left;
+    padding: 16px 16px 16px 48px;            /* 左边留出放竖线和圆点的位置 */
+  }
+  .node:nth-child(odd) { transform: translateX(40px); }  /* 统一从右侧滑入 */
+  .node.visible        { transform: none; }
+
+  .node::after,
+  .node:nth-child(odd)::after,
+  .node:nth-child(even)::after { left: 13px; right: auto; }
+}
